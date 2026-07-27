@@ -1,0 +1,20 @@
+---
+import Base from './Base.astro';
+import { formatDate } from '../lib/format';
+
+interface Props { title: string; description: string; pubDate: Date; tags: string[] }
+const { title, description, pubDate, tags } = Astro.props;
+---
+<Base title={`${title} — Piero Flores`} description={description}>
+  <article class="mx-auto max-w-3xl pt-16">
+    <p class="tabular text-sm text-(--color-accent)">
+      <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+      {tags.length > 0 && <span class="text-(--color-muted)"> · {tags.join(' · ')}</span>}
+    </p>
+    <h1 class="mt-3 font-(family-name:--font-display) text-3xl font-bold tracking-tight md:text-4xl">{title}</h1>
+    <div class="prose-custom mt-8">
+      <slot />
+    </div>
+    <p class="mt-12 text-sm"><a class="text-(--color-accent) hover:underline" href="/blog">← All posts</a></p>
+  </article>
+</Base>
