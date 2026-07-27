@@ -7,7 +7,8 @@ const { title, description, pubDate, tags } = Astro.props;
 ---
 <Base title={`${title} — Piero Flores`} description={description}>
   <article class="mx-auto max-w-3xl pt-16">
-    <p class="tabular text-sm text-(--color-accent)">
+    <p class="flex items-center gap-2 tabular text-sm text-(--color-ink)">
+      <span aria-hidden="true" class="h-2 w-2 shrink-0 bg-(--color-accent)"></span>
       <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
       {tags.length > 0 && <span class="text-(--color-muted)"> · {tags.join(' · ')}</span>}
     </p>
@@ -15,6 +16,6 @@ const { title, description, pubDate, tags } = Astro.props;
     <div class="prose-custom mt-8">
       <slot />
     </div>
-    <p class="mt-12 text-sm"><a class="text-(--color-accent) hover:underline" href="/blog">← All posts</a></p>
+    <p class="mt-12 text-sm"><a class="text-(--color-ink) underline decoration-(--color-accent) underline-offset-2 transition-colors hover:text-(--color-accent)" href="/blog">← All posts</a></p>
   </article>
 </Base>

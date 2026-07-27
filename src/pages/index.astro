@@ -26,7 +26,10 @@ const personJsonLd = JSON.stringify({
   <script type="application/ld+json" set:html={personJsonLd} slot="head" />
 
   <section class="pt-20 pb-16 md:pt-28">
-    <p class="tabular text-sm text-(--color-accent)">Birmingham, UK · MSc Robotics 2026</p>
+    <p class="flex items-center gap-2 tabular text-sm text-(--color-ink)">
+      <span aria-hidden="true" class="h-2 w-2 shrink-0 bg-(--color-accent)"></span>
+      Birmingham, UK · MSc Robotics 2026
+    </p>
     <h1 class="mt-4 font-(family-name:--font-display) text-5xl font-bold tracking-tight md:text-7xl">
       Piero Flores
     </h1>
@@ -36,7 +39,7 @@ const personJsonLd = JSON.stringify({
       <span class="tabular text-(--color-ink)">0.0002&nbsp;mm</span>, and robots that navigate hills on their own.
     </p>
     <div class="mt-8 flex flex-wrap gap-4">
-      <a href="/cv" class="bg-(--color-ink) px-5 py-2.5 text-sm font-medium text-(--color-paper) transition-colors hover:bg-(--color-accent)">View CV</a>
+      <a href="/cv" class="bg-(--color-ink) px-5 py-2.5 text-sm font-medium text-(--color-paper) transition-colors hover:bg-[color-mix(in_srgb,var(--color-accent)_80%,black)]">View CV</a>
       <a href="mailto:pierojesus14@gmail.com" class="border border-(--color-hairline) px-5 py-2.5 text-sm font-medium transition-colors hover:border-(--color-accent) hover:text-(--color-accent)">Get in touch</a>
     </div>
   </section>
@@ -46,6 +49,6 @@ const personJsonLd = JSON.stringify({
     <div class="mt-2 space-y-10 pt-4">
       {featured.map((p) => <ProjectCard project={p} />)}
     </div>
-    <p class="mt-10 text-sm"><a class="text-(--color-accent) hover:underline" href="/projects">All projects →</a></p>
+    <p class="mt-10 text-sm"><a class="text-(--color-ink) underline decoration-(--color-accent) underline-offset-2 transition-colors hover:text-(--color-accent)" href="/projects">All projects →</a></p>
   </section>
 </Base>

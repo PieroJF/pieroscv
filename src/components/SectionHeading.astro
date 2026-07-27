@@ -2,7 +2,7 @@
 interface Props { index: string; title: string }
 const { index, title } = Astro.props;
 ---
-<h2 class="rule flex items-baseline gap-4 pt-4 font-(family-name:--font-display) text-xl font-semibold tracking-tight">
-  <span class="tabular text-sm font-normal text-(--color-accent)">{index}</span>
+<h2 class="flex items-baseline gap-4 border-t-2 border-(--color-accent) pt-4 font-(family-name:--font-display) text-xl font-semibold tracking-tight">
+  <span class="tabular text-sm font-normal text-(--color-ink)">{index}</span>
   {title}
 </h2>

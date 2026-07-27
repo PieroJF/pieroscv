@@ -18,7 +18,8 @@ const posts = (await getCollection('blog')).sort(
   <ul class="mt-12 space-y-8">
     {posts.map((post) => (
       <li class="rule pt-5">
-        <p class="tabular text-sm text-(--color-accent)">
+        <p class="flex items-center gap-2 tabular text-sm text-(--color-ink)">
+          <span aria-hidden="true" class="h-2 w-2 shrink-0 bg-(--color-accent)"></span>
           <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
         </p>
         <h2 class="mt-1 font-(family-name:--font-display) text-xl font-semibold tracking-tight">

@@ -45,7 +45,13 @@ a:focus-visible, button:focus-visible {
   padding-top: 1rem;
 }
 .prose-custom p { margin: 1rem 0; }
-.prose-custom a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 2px; }
+.prose-custom a {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-underline-offset: 2px;
+}
+.prose-custom a:hover { color: var(--color-accent); }
 .prose-custom strong { font-weight: 600; }
 .prose-custom code {
   font-size: 0.9em;
