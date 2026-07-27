@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { projects } from '../data/projects';
+
+const featured = projects.filter((p) => p.featured);
+const other = projects.filter((p) => !p.featured);
+---
+<Base
+  title="Projects — Piero Flores"
+  description="Robotics, automation and metrology projects: laser triangulation metrology, QArm manipulation, autonomous navigation, industrial assembly automation."
+>
+  <section class="pt-16">
+    <h1 class="font-(family-name:--font-display) text-4xl font-bold tracking-tight">Projects</h1>
+    <p class="mt-3 max-w-2xl text-(--color-muted)">
+      Selected engineering work. More at <a class="text-(--color-accent) hover:underline" href="https://github.com/PieroJF">github.com/PieroJF</a>.
+    </p>
+  </section>
+
+  <section class="mt-12" aria-labelledby="core-heading">
+    <SectionHeading index="01" title="Core robotics" />
+    <div class="mt-2 space-y-10 pt-4">{featured.map((p) => <ProjectCard project={p} />)}</div>
+  </section>
+
+  <section class="mt-16" aria-labelledby="more-heading">
+    <SectionHeading index="02" title="More work" />
+    <div class="mt-2 space-y-10 pt-4">{other.map((p) => <ProjectCard project={p} />)}</div>
+  </section>
+</Base>
