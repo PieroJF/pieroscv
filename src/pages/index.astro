@@ -1,7 +1,51 @@
 ---
-import '../styles/global.css';
+import Base from '../layouts/Base.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { projects } from '../data/projects';
+
+const featured = projects.filter((p) => p.featured);
+const personJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Piero Jesus Flores Lopez',
+  jobTitle: 'Mechatronics & Robotics Engineer',
+  email: 'mailto:pierojesus14@gmail.com',
+  url: 'https://pieroscv.com',
+  sameAs: [
+    'https://github.com/PieroJF',
+    'https://www.linkedin.com/in/piero-jesus-flores-lopez/',
+  ],
+  alumniOf: ['University of Birmingham', 'Tecnológico de Monterrey'],
+});
 ---
-<html lang="en">
-  <head><meta charset="utf-8" /><title>Piero Flores</title></head>
-  <body><h1>Piero Flores — coming soon</h1></body>
-</html>
+<Base
+  title="Piero Flores — Mechatronics & Robotics Engineer"
+  description="MSc Robotics (University of Birmingham). Robotic manipulation, autonomous navigation, optical metrology and industrial automation. Portfolio, CV and technical blog."
+>
+  <script type="application/ld+json" set:html={personJsonLd} slot="head" />
+
+  <section class="pt-20 pb-16 md:pt-28">
+    <p class="tabular text-sm text-(--color-accent)">Birmingham, UK · MSc Robotics 2026</p>
+    <h1 class="mt-4 font-(family-name:--font-display) text-5xl font-bold tracking-tight md:text-7xl">
+      Piero Flores
+    </h1>
+    <p class="mt-4 max-w-2xl text-xl leading-relaxed text-(--color-muted) md:text-2xl">
+      Mechatronics &amp; robotics engineer. I build machines that measure to
+      <span class="tabular text-(--color-ink)">25&nbsp;µm</span>, arms that place to
+      <span class="tabular text-(--color-ink)">0.0002&nbsp;mm</span>, and robots that navigate hills on their own.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-4">
+      <a href="/cv" class="bg-(--color-ink) px-5 py-2.5 text-sm font-medium text-(--color-paper) transition-colors hover:bg-(--color-accent)">View CV</a>
+      <a href="mailto:pierojesus14@gmail.com" class="border border-(--color-hairline) px-5 py-2.5 text-sm font-medium transition-colors hover:border-(--color-accent) hover:text-(--color-accent)">Get in touch</a>
+    </div>
+  </section>
+
+  <section aria-labelledby="featured-heading">
+    <SectionHeading index="01" title="Featured work" />
+    <div class="mt-2 space-y-10 pt-4">
+      {featured.map((p) => <ProjectCard project={p} />)}
+    </div>
+    <p class="mt-10 text-sm"><a class="text-(--color-accent) hover:underline" href="/projects">All projects →</a></p>
+  </section>
+</Base>
