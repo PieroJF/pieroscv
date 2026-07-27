@@ -1,0 +1,8 @@
+---
+interface Props { index: string; title: string }
+const { index, title } = Astro.props;
+---
+<h2 class="rule flex items-baseline gap-4 pt-4 font-(family-name:--font-display) text-xl font-semibold tracking-tight">
+  <span class="tabular text-sm font-normal text-(--color-accent)">{index}</span>
+  {title}
+</h2>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pieroscv.com/sitemap-index.xml
