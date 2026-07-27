@@ -8,6 +8,7 @@
   --color-accent: #e84e0f;
   --color-muted: #5b5750;
   --color-hairline: #d9d6cf;
+  --color-code-bg: #efede8;
   --font-display: "Space Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
 }
@@ -55,11 +56,11 @@ a:focus-visible, button:focus-visible {
 .prose-custom strong { font-weight: 600; }
 .prose-custom code {
   font-size: 0.9em;
-  background: #efede8;
+  background: var(--color-code-bg);
   padding: 0.1em 0.35em;
   border-radius: 3px;
 }
-.prose-custom pre { background: #14120f; color: #fafaf8; padding: 1rem 1.25rem; overflow-x: auto; margin: 1.25rem 0; }
+.prose-custom pre { background: var(--color-ink); color: var(--color-paper); padding: 1rem 1.25rem; overflow-x: auto; margin: 1.25rem 0; }
 .prose-custom pre code { background: none; padding: 0; color: inherit; }
 .prose-custom ul { list-style: none; margin: 1rem 0; padding: 0; }
 .prose-custom ul li { position: relative; padding-left: 1.75rem; margin: 0.5rem 0; }

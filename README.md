@@ -1,43 +1,31 @@
-# Astro Starter Kit: Minimal
+# pieroscv.com
 
-```sh
-npm create astro@latest -- --template minimal
+Personal CV/portfolio and technical blog of **Piero Jesus Flores Lopez** — Mechatronics & Robotics Engineer.
+
+Live at [pieroscv.com](https://pieroscv.com).
+
+## Stack
+
+- [Astro](https://astro.build) — fully static output, zero JS by default
+- [Tailwind CSS v4](https://tailwindcss.com) with a custom Swiss/engineering design-token system
+- Blog as a Markdown content collection (`src/content/blog/`)
+- Hosted on Cloudflare Workers (static assets), deployed via git-connected Workers Builds
+
+## Development
+
+```bash
+npm install
+npm run dev       # local dev server
+npm run build     # static build to dist/
+npm run test      # unit (Vitest) + E2E/a11y/visual (Playwright)
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Testing
 
-## 🚀 Project Structure
+- Unit tests: Vitest (`tests/unit/`)
+- E2E, accessibility (axe, WCAG 2.2 AA) and visual regression at 4 breakpoints: Playwright (`tests/e2e/`)
+- CI runs the full suite on every push and PR (GitHub Actions)
 
-Inside of your Astro project, you'll see the following folders and files:
+## Writing a post
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Add a Markdown file to `src/content/blog/` with `title`, `description`, `pubDate` and optional `tags` frontmatter, then push. The build validates frontmatter and generates the route.
