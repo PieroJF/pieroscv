@@ -1,0 +1,131 @@
+---
+import Base from '../layouts/Base.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+
+const skills: [string, string][] = [
+  ['Programming', 'Python, C/C++, SQL, HTML/CSS/JavaScript, PHP'],
+  ['Robotics & Automation', 'ROS2 (Jazzy), MoveIt2, Gazebo, MuJoCo, xArm SDK, Quanser SDK (QArm, HIL), Intel RealSense SDK, Siemens TIA Portal, Ladder Logic'],
+  ['CAD & Simulation', 'SolidWorks (CSWA & CSWP), MATLAB & Simulink, Siemens Plant Simulation'],
+  ['AI & Machine Learning', 'PyTorch, Stable-Baselines3 (PPO), Gymnasium, TensorFlow, OpenCV, Intel RealSense D415 RGB-D'],
+  ['Robotics Algorithms', 'Forward/inverse kinematics, DH parameters, analytical IK + Newton-Raphson, hand-eye calibration (Umeyama SVD), cubic-spline trajectories, EKF sensor fusion, ICP, OctoMap, A*, SLAM'],
+  ['Metrology & Quality', 'Laser line triangulation, optical metrology, GUM/NIST uncertainty analysis (k=2), Gage R&R MSA, automated pass/fail QC'],
+  ['Embedded Systems', 'Teensy 4.1, Arduino, Raspberry Pi, STM32, stepper control (STEP/DIR), GPIO, MOSFET circuits'],
+  ['Protocols', 'TCP/IP sockets, industrial Ethernet, digital I/O (PNP/NPN), URDF/Xacro'],
+  ['Databases & OS', 'MySQL, MongoDB · Linux (Ubuntu 24.04), Windows'],
+];
+
+const experience = [
+  {
+    title: 'Full-Stack Software Engineer · Bora Hotel Iquitos',
+    period: 'Nov 2025 – Present · Iquitos, Peru',
+    bullets: [
+      'Sole engineer of the PMS/CRM running the hotel’s daily operation: reservations, multi-currency billing, finance, payroll and guest messaging.',
+      '~160k lines in production (PHP 8.3, in-house MVC + JavaScript), 75 domain models, internal REST API, 60+ versioned migrations with zero data loss.',
+      'Integrations: WhatsApp Cloud API, OpenPay payments with automatic reconciliation, BCRP daily exchange rate, receipt OCR, MINCETUR reports.',
+      'Security: TOTP 2FA, Cloudflare Zero Trust, rate limiting, secrets encryption, audit logging, RBAC. Infra: Hetzner VPS, Caddy/PHP-FPM/MySQL, automated deploys.',
+    ],
+  },
+  {
+    title: 'Automation Engineer · Argos Automation Engineering',
+    period: '2024 – 2025 · Mexico',
+    bullets: [
+      'Designed and implemented automated, computer-controlled processes on proprietary microcontroller and microprocessor platforms.',
+      'Developed and maintained embedded C projects, integrating industrial protocols such as CAN bus.',
+    ],
+  },
+  {
+    title: 'Mechanical Design Intern · Alfa Soldadura',
+    period: '2022 · Mexico',
+    bullets: [
+      'Mechanical designs, assemblies and engineering drawings in SolidWorks for welding equipment manufacturing; produced and validated technical documentation.',
+    ],
+  },
+  {
+    title: 'Engineering Intern · Argos Automation Engineering',
+    period: '2020 – 2021 · Mexico',
+    bullets: [
+      'Supported Design & Development with CAD modifications, drawings and BOMs; coordinated suppliers in Mexico and the USA; quality testing and stakeholder reporting.',
+    ],
+  },
+];
+---
+<Base
+  title="CV — Piero Flores"
+  description="CV of Piero Jesus Flores Lopez: MSc Robotics (University of Birmingham), BSc Mechatronics (Tec de Monterrey), robotics, automation and metrology experience."
+>
+  <section class="pt-16">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <h1 class="font-(family-name:--font-display) text-4xl font-bold tracking-tight">Curriculum Vitae</h1>
+        <p class="mt-3 max-w-2xl text-(--color-muted)">Mechatronics &amp; Robotics Engineer · Birmingham, UK · Right to work in the UK (Graduate Visa eligible)</p>
+      </div>
+      <a
+        href="/cv/Piero-Flores-CV.pdf"
+        download
+        class="bg-(--color-ink) px-5 py-2.5 text-sm font-medium text-(--color-paper) transition-colors hover:bg-(--color-accent)"
+      >Download PDF</a>
+    </div>
+  </section>
+
+  <section class="mt-12" aria-labelledby="education">
+    <SectionHeading index="01" title="Education" />
+    <div class="mt-2 space-y-8 pt-4">
+      <div>
+        <div class="flex flex-wrap items-baseline justify-between gap-2">
+          <h3 class="font-medium">MSc in Robotics — University of Birmingham, UK</h3>
+          <span class="tabular text-sm text-(--color-muted)">Sep 2025 – Sep 2026</span>
+        </div>
+        <ul class="mt-2 list-none space-y-1 text-sm leading-relaxed text-(--color-muted)">
+          <li>Thesis: design, build and metrological validation of a laser line triangulation scanning machine for cylindrical part inspection (OD/ID).</li>
+          <li>Modules: autonomous navigation, SLAM, reinforcement learning, 3D mapping, LiDAR processing, applied robotics.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="flex flex-wrap items-baseline justify-between gap-2">
+          <h3 class="font-medium">BSc in Mechatronics Engineering — Tecnológico de Monterrey, Mexico</h3>
+          <span class="tabular text-sm text-(--color-muted)">2019 – 2024</span>
+        </div>
+        <ul class="mt-2 list-none space-y-1 text-sm leading-relaxed text-(--color-muted)">
+          <li>2:1 Upper Second-Class Honours equivalent. Exchanges: Hochschule Offenburg (DE), Universitat de Barcelona (ES), Università di Genova (IT).</li>
+          <li>SolidWorks certified: CSWA and CSWP.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-16" aria-labelledby="skills">
+    <SectionHeading index="02" title="Technical skills" />
+    <dl class="mt-2 grid gap-x-10 gap-y-4 pt-4 md:grid-cols-2">
+      {skills.map(([k, v]) => (
+        <div>
+          <dt class="text-sm font-medium">{k}</dt>
+          <dd class="mt-1 text-sm leading-relaxed text-(--color-muted)">{v}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  <section class="mt-16" aria-labelledby="experience">
+    <SectionHeading index="03" title="Experience" />
+    <div class="mt-2 space-y-8 pt-4">
+      {experience.map((e) => (
+        <div>
+          <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h3 class="font-medium">{e.title}</h3>
+            <span class="tabular text-sm text-(--color-muted)">{e.period}</span>
+          </div>
+          <ul class="mt-2 space-y-1 text-sm leading-relaxed text-(--color-muted)">
+            {e.bullets.map((b) => <li>{b}</li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="mt-16" aria-labelledby="languages">
+    <SectionHeading index="04" title="Languages & mobility" />
+    <p class="mt-4 max-w-2xl text-sm leading-relaxed text-(--color-muted)">
+      Spanish (native) · English (advanced, professional working proficiency). Peruvian nationality; international experience across Peru, Mexico, Germany, Spain, Italy and the UK. Willing to relocate and travel.
+    </p>
+  </section>
+</Base>
