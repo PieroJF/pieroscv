@@ -19,6 +19,7 @@
 - WCAG 2.2 AA — `tests/e2e/a11y.spec.ts` must stay green (zero violations) on every path it covers, including new ones added by this plan.
 - Visual regression baselines (`tests/e2e/visual.spec.ts-snapshots/*-linux.png`) must be regenerated for any page whose rendered output changes, and committed alongside the code that changed it. Only `-linux.png` files are ours to regenerate from this environment (Linux) — leave `-win32.png` files untouched.
 - `prefers-reduced-motion` handling in `src/styles/global.css` is unaffected — this plan adds no new animation.
+- Always run `npx playwright test` with an explicit `--workers=1` flag when executing this plan. The dev/build machine this plan was written and executed on is memory-constrained (swap nearly full); the default 4 parallel workers caused flaky 30s timeouts on page loads that were confirmed to disappear entirely (15/15 passing in ~12s) with a single worker. This is a CLI-flag override for local execution only — it does not require changing the committed `workers: 4` in `playwright.config.ts`, which is fine for CI's dedicated runners.
 
 ---
 
@@ -111,7 +112,8 @@ git commit -m "feat: add MDX support for blog content"
 - Create: `src/components/Figure.astro`
 - Modify: `src/content/blog/qarm-fruit-sorting.mdx`
 - Create: `tests/e2e/blog-figures.spec.ts`
-- Modify: `tests/e2e/visual.spec.ts-snapshots/blog-*-linux.png` (regenerated)
+- Modify: `tests/e2e/visual.spec.ts` (add a `qarm-post` entry to the `pages` array — the existing suite only screenshots the `/blog` index, never an individual post page, so without this the new figures would have zero visual-regression coverage)
+- Create: `tests/e2e/visual.spec.ts-snapshots/qarm-post-*-linux.png`
 
 **Interfaces:**
 - Produces: `Figure.astro` — props `{ src: ImageMetadata; alt: string; caption?: string; number?: string; eager?: boolean; class?: string }`. Renders `<figure class="border border-(--color-hairline) p-2 {class}">` containing an `astro:assets` `<Image>` (`loading="lazy"` unless `eager`, in which case `loading="eager" fetchpriority="high"`) and, only when `caption` is passed, a `<figcaption>` reading `Fig. {number} — {caption}` (the `Fig. {number} — ` prefix is omitted if `number` is not passed).
@@ -261,18 +263,56 @@ Expected: PASS.
 - [ ] **Step 7: Run the full existing suite to check for regressions**
 
 Run: `npx playwright test --grep "blog|a11y|smoke"`
-Expected: PASS. (`visual:` tests are excluded from this grep — handled next.)
+Expected: PASS. Note: because Playwright's `--grep` matches anywhere in the test title, this also runs the 4 existing `visual: blog @ ...` tests (their titles contain the substring "blog") — that's fine, they still pass since the `/blog` index page itself hasn't changed.
 
-- [ ] **Step 8: Regenerate the blog page's visual baselines**
+- [ ] **Step 8: Add visual-regression coverage for the post page**
 
-Run: `npx playwright test --update-snapshots --grep "visual: blog"`
-Expected: 4 new/updated `blog-*-linux.png` files (mobile/tablet/laptop/desktop) reflecting the new figures.
+The existing `tests/e2e/visual.spec.ts` only screenshots the `/blog` index — no individual post page has ever had visual coverage. Without this step, the two new figures would ship with zero visual-regression protection. Edit `tests/e2e/visual.spec.ts`, adding one entry to the `pages` array (right after `blog`):
 
-- [ ] **Step 9: Commit**
+```ts
+import { expect, test } from '@playwright/test';
+
+const viewports = [
+  { name: 'mobile', width: 320, height: 900 },
+  { name: 'tablet', width: 768, height: 900 },
+  { name: 'laptop', width: 1024, height: 900 },
+  { name: 'desktop', width: 1440, height: 900 },
+];
+const pages = [
+  { name: 'home', path: '/' },
+  { name: 'projects', path: '/projects' },
+  { name: 'blog', path: '/blog' },
+  { name: 'qarm-post', path: '/blog/qarm-fruit-sorting' },
+  { name: 'cv', path: '/cv' },
+];
+
+for (const vp of viewports) {
+  for (const p of pages) {
+    test(`visual: ${p.name} @ ${vp.name}`, async ({ page }) => {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      await page.goto(p.path);
+      await page.waitForLoadState('networkidle');
+      await expect(page).toHaveScreenshot(`${p.name}-${vp.name}.png`, {
+        fullPage: true,
+        maxDiffPixelRatio: 0.02,
+      });
+    });
+  }
+}
+```
+
+- [ ] **Step 9: Regenerate the affected visual baselines**
+
+Run: `npx playwright test --update-snapshots --grep "visual: (blog|qarm-post)"`
+Expected: 4 brand-new `qarm-post-*-linux.png` files (mobile/tablet/laptop/desktop, showing the post with its two figures). The 4 existing `blog-*-linux.png` files are re-written but should be pixel-identical (the index page didn't change) — `git status` may show them as unchanged.
+
+- [ ] **Step 10: Commit**
 
 ```bash
 git add src/assets/projects/qarm src/components/Figure.astro
 git add src/content/blog/qarm-fruit-sorting.mdx tests/e2e/blog-figures.spec.ts
+git add tests/e2e/visual.spec.ts
+git add tests/e2e/visual.spec.ts-snapshots/qarm-post-*-linux.png
 git add tests/e2e/visual.spec.ts-snapshots/blog-*-linux.png
 git commit -m "feat: add inline figures to the QArm blog post"
 ```
@@ -291,7 +331,9 @@ git commit -m "feat: add inline figures to the QArm blog post"
 - Create: `src/content/blog/fred-factory-station-design.mdx`
 - Modify: `tests/e2e/blog.spec.ts` (add a test for the new post)
 - Modify: `tests/e2e/a11y.spec.ts` (add the new post's path)
-- Modify: `tests/e2e/visual.spec.ts-snapshots/blog-*-linux.png` (regenerated again — the index page listing changes)
+- Modify: `tests/e2e/visual.spec.ts` (add a `fred-post` entry to the `pages` array, same reason as Task 2's `qarm-post` entry)
+- Modify: `tests/e2e/visual.spec.ts-snapshots/blog-*-linux.png` (regenerated — the index page listing changes, now shows 2 posts)
+- Create: `tests/e2e/visual.spec.ts-snapshots/fred-post-*-linux.png`
 
 **Interfaces:**
 - Consumes (Task 2): `Figure` component (`src/components/Figure.astro`).
@@ -521,18 +563,56 @@ const paths = ['/', '/projects', '/blog', '/blog/qarm-fruit-sorting', '/blog/fre
 Run: `npx playwright test --grep-invert "visual:"`
 Expected: PASS.
 
-- [ ] **Step 11: Regenerate the blog page's visual baselines**
+- [ ] **Step 11: Add visual-regression coverage for the new post page**
 
-Run: `npx playwright test --update-snapshots --grep "visual: blog"`
-Expected: updated `blog-*-linux.png` (the index now lists 2 posts).
+Edit `tests/e2e/visual.spec.ts`, adding a `fred-post` entry to the `pages` array (this is the same fix applied in Task 2 for the QArm post — the suite only ever covers the `/blog` index by default, never individual post pages):
 
-- [ ] **Step 12: Commit**
+```ts
+import { expect, test } from '@playwright/test';
+
+const viewports = [
+  { name: 'mobile', width: 320, height: 900 },
+  { name: 'tablet', width: 768, height: 900 },
+  { name: 'laptop', width: 1024, height: 900 },
+  { name: 'desktop', width: 1440, height: 900 },
+];
+const pages = [
+  { name: 'home', path: '/' },
+  { name: 'projects', path: '/projects' },
+  { name: 'blog', path: '/blog' },
+  { name: 'qarm-post', path: '/blog/qarm-fruit-sorting' },
+  { name: 'fred-post', path: '/blog/fred-factory-station-design' },
+  { name: 'cv', path: '/cv' },
+];
+
+for (const vp of viewports) {
+  for (const p of pages) {
+    test(`visual: ${p.name} @ ${vp.name}`, async ({ page }) => {
+      await page.setViewportSize({ width: vp.width, height: vp.height });
+      await page.goto(p.path);
+      await page.waitForLoadState('networkidle');
+      await expect(page).toHaveScreenshot(`${p.name}-${vp.name}.png`, {
+        fullPage: true,
+        maxDiffPixelRatio: 0.02,
+      });
+    });
+  }
+}
+```
+
+- [ ] **Step 12: Regenerate the affected visual baselines**
+
+Run: `npx playwright test --update-snapshots --grep "visual: (blog|fred-post)"`
+Expected: 4 brand-new `fred-post-*-linux.png` files (mobile/tablet/laptop/desktop, showing the post with its hero image and two inline figures). The 4 `blog-*-linux.png` files are updated too — this time they genuinely change, since the index now lists 2 posts instead of 1.
+
+- [ ] **Step 13: Commit**
 
 ```bash
 git add src/assets/projects/fred-factory src/content.config.ts
 git add src/layouts/BlogPost.astro src/pages/blog/\[slug\].astro
 git add src/content/blog/fred-factory-station-design.mdx
-git add tests/e2e/blog.spec.ts tests/e2e/a11y.spec.ts
+git add tests/e2e/blog.spec.ts tests/e2e/a11y.spec.ts tests/e2e/visual.spec.ts
+git add tests/e2e/visual.spec.ts-snapshots/fred-post-*-linux.png
 git add tests/e2e/visual.spec.ts-snapshots/blog-*-linux.png
 git commit -m "feat: add Fred-Factory station design blog post"
 ```
