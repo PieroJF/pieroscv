@@ -1,0 +1,28 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro:assets';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+  number?: string;
+  eager?: boolean;
+  class?: string;
+}
+const { src, alt, caption, number, eager = false, class: className } = Astro.props;
+---
+<figure class:list={['border border-(--color-hairline) p-2', className]}>
+  <Image
+    src={src}
+    alt={alt}
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : undefined}
+    class="h-auto w-full"
+  />
+  {caption && (
+    <figcaption class="mt-2 tabular text-xs text-(--color-muted)">
+      {number && <>Fig. {number} — </>}{caption}
+    </figcaption>
+  )}
+</figure>

@@ -4,6 +4,9 @@ description: "How our team's QArm fruit-sorting robot solves inverse kinematics 
 pubDate: 2026-07-27
 tags: ["robotics", "kinematics", "python"]
 ---
+import Figure from '../../components/Figure.astro';
+import trajectoryImg from '../../assets/projects/qarm/trajectory-3d.png';
+import jointAnglesImg from '../../assets/projects/qarm/joint-angles.png';
 
 For our Applied Robotics module at the University of Birmingham, a team of four of us
 built an autonomous fruit-sorting system on a Quanser QArm: a 4-DOF manipulator with an
@@ -32,6 +35,14 @@ kinematics on the joint solution, measure the difference. For a fruit-sorting ta
 overkill by orders of magnitude, which is exactly what you want from the layer you never
 want to debug again.
 
+<Figure
+  src={trajectoryImg}
+  alt="3D plot of the QArm end-effector trajectory during a sorting cycle, showing pick-and-place paths to three color-coded fruit baskets."
+  number="01"
+  caption="End-effector trajectory for a full sorting cycle — the analytical IK seed refined by Newton-Raphson, run through forward kinematics to measure round-trip error."
+  class="my-8"
+/>
+
 ## The rest of the pipeline
 
 The IK sits inside a 13-state finite-state machine (INIT → SCAN → APPROACH → PICK →
@@ -41,5 +52,13 @@ shape classification in OpenCV, back-projected to 3D with the D415 depth stream
 (1280×720 @ 30 fps). Hand-eye calibration uses the closed-form Umeyama SVD method, and a
 MATLAB/Simulink facade wraps the Python algorithms for an auditable control layer on the
 Quanser HIL stack.
+
+<Figure
+  src={jointAnglesImg}
+  alt="Four stacked line charts of the QArm's four joint angles over a 70-second sorting cycle, showing the repeated scan-approach-pick-place pattern."
+  number="02"
+  caption="Joint angles φ₁–φ₄ over a 70 s cycle: the repeated scan → approach → pick → basket → place pattern from the FSM."
+  class="my-8"
+/>
 
 Code: [github.com/PieroJF/Robot-qarm-ruit-sorting](https://github.com/PieroJF/Robot-qarm-ruit-sorting).

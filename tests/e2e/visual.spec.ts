@@ -10,6 +10,7 @@ const pages = [
   { name: 'home', path: '/' },
   { name: 'projects', path: '/projects' },
   { name: 'blog', path: '/blog' },
+  { name: 'qarm-post', path: '/blog/qarm-fruit-sorting' },
   { name: 'cv', path: '/cv' },
 ];
 
