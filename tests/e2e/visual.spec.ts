@@ -11,6 +11,7 @@ const pages = [
   { name: 'projects', path: '/projects' },
   { name: 'blog', path: '/blog' },
   { name: 'qarm-post', path: '/blog/qarm-fruit-sorting' },
+  { name: 'fred-post', path: '/blog/fred-factory-station-design' },
   { name: 'cv', path: '/cv' },
 ];
 
