@@ -1,3 +1,9 @@
+import type { ImageMetadata } from 'astro:assets';
+import qarmTrajectory from '../assets/projects/qarm/trajectory-3d.png';
+import fredStationPhoto from '../assets/projects/fred-factory/station-photo.png';
+import robodkCadIso from '../assets/projects/robodk/cad-iso.png';
+import latticeObstacleMap from '../assets/projects/lattice/obstacle-map.png';
+
 export type Project = {
   slug: string;
   title: string;
@@ -9,6 +15,7 @@ export type Project = {
   repo: string | null;
   featured: boolean;
   note?: string;
+  image?: { src: ImageMetadata; alt: string };
 };
 
 export const projects: Project[] = [
@@ -44,6 +51,10 @@ export const projects: Project[] = [
     ],
     repo: 'https://github.com/PieroJF/Robot-qarm-ruit-sorting',
     featured: true,
+    image: {
+      src: qarmTrajectory,
+      alt: '3D plot of the QArm end-effector trajectory during a sorting cycle, showing pick-and-place paths to three color-coded fruit baskets.',
+    },
   },
   {
     slug: 'moose-navigation',
@@ -76,6 +87,10 @@ export const projects: Project[] = [
     ],
     repo: 'https://github.com/PieroJF/Fred-Factory-xArm-robot-assembly-line',
     featured: true,
+    image: {
+      src: fredStationPhoto,
+      alt: 'FrED Factory Station 1: a white UFACTORY xArm 6 cobot with a Datalogic vision gripper over a conveyor, HMI panel and PLC-driven fixtures on a lab bench.',
+    },
   },
   {
     slug: 'lattice-planning',
@@ -88,6 +103,10 @@ export const projects: Project[] = [
     highlights: [],
     repo: 'https://github.com/PieroJF/lattice-motion-planning-ros2',
     featured: false,
+    image: {
+      src: latticeObstacleMap,
+      alt: '2D environment map with start and goal poses and four rectangular obstacles, used for the state-lattice path planning comparison.',
+    },
   },
   {
     slug: 'robodk-fiab',
@@ -100,6 +119,10 @@ export const projects: Project[] = [
     highlights: [],
     repo: 'https://github.com/PieroJF/robodk-fiab-assembly-cell',
     featured: false,
+    image: {
+      src: robodkCadIso,
+      alt: 'CAD isometric render of the RoboDK Factory-in-a-Box XY stage assembly.',
+    },
   },
   {
     slug: 'bora-pms',
