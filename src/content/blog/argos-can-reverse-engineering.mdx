@@ -1,0 +1,79 @@
+---
+title: "Reverse-engineering a US$25,000 motor driver's CAN protocol with two Arduinos"
+description: "How I got a downhole-rated motor driver running from a standard Arduino by sniffing its CAN bus, plus the VBA/Python COM scripts that cut SolidWorks drawing packages from hours to minutes."
+pubDate: 2026-08-03
+tags: ["embedded", "can-bus", "reverse-engineering", "solidworks", "automation"]
+heroImage: ../../assets/projects/argos/rig-photo.jpg
+heroImageAlt: "Bench test rig: an Arduino Mega with breadboard and DB9 serial links wired to a bench power supply, a solenoid valve, a solid-state relay and the CAN-connected motor driver."
+---
+import Figure from '../../components/Figure.astro';
+import workflowImg from '../../assets/projects/argos/motor-driver-workflow.png';
+
+During my time as an Automation Engineer at Argos, an oil and gas automation company in
+Mexico, I ran into two very different walls: a motor driver that would only talk to its
+vendor's software, and a drawing workflow that ate entire afternoons. Both fell to the
+same approach: find the seam, script it.
+
+## The US$25,000 driver nobody could talk to
+
+The team was working to bring microcontroller-based control into high-temperature,
+high-pressure downhole environments. For that purpose the company had purchased a motor
+driver rated for those conditions, valued at US$25,000. The problem was that driving it
+required either an even more expensive dedicated microcontroller, or a PC running the
+vendor's proprietary software with an Arduino acting purely as a bridge to reach the
+driver.
+
+In theory a third-party microcontroller could control the driver. In practice, the
+vendor's support ended at sharing the meaning of each hexadecimal byte transmitted over
+the CAN bus. They never disclosed the actual communication protocol or the real control
+sequence the driver expected.
+
+## A man-in-the-middle made of Arduino
+
+I was assigned the task of finding a way to control that motor driver directly from an
+Arduino over CAN bus. My approach was hands on: I set up a second Arduino as a
+man-in-the-middle between the PC and the driver, running a C script that intercepted the
+raw byte strings the proprietary software was sending and logged every frame to a text
+file.
+
+With the captured traffic on one side and the vendor's hexadecimal byte definitions on
+the other, I reverse-engineered the driver's communication and control sequences and
+reproduced them in my own code. The result: a US$25,000 motor driver controlled from a
+standard Arduino over CAN bus, no proprietary software and no dedicated controller
+required.
+
+<Figure
+  src={workflowImg}
+  alt="Block diagram of the CAN-bus test rig: three buttons feed the microcontroller, which talks FDCAN1 TX/RX to a transceiver driving a resistor-terminated CANH/CANL twisted-pair bus; the far end of the bus reaches the logic-board Nano, driving the motor and pump, and the driver, fused from the power supply and driving the valve, with all returns joining a common ground."
+  number="01"
+  caption="Block diagram of the rig — the microcontroller drives both the US$25,000 driver and the logic-board Nano over the same resistor-terminated CANH/CANL bus (CAN path in green)."
+  class="my-8"
+/>
+
+What I like most about this one is that it needed no exotic tooling. A spare Arduino, a
+C script, a log file and patience were enough to open up hardware that was effectively
+locked to one vendor's stack.
+
+## Bonus round: killing the drawing grind
+
+Same job, different bottleneck. I noticed the engineering department was losing hours on
+a purely mechanical task: many SolidWorks parts had to be turned into 2D drawings, and
+every .slddrw file then had to be converted to PDF one by one. Slow, tedious and
+inefficient.
+
+Using Claude and the SolidWorks documentation, I discovered the whole workflow could be
+automated with VBA and Python scripts through the COM interface: generating the 2D
+drawings, dimensioning the part, inserting its data, generating tables such as the bill
+of materials, and the rest of the routine steps a drawing requires. Drawing packages for
+entire assemblies that used to take hours were now done in minutes.
+
+To close the loop, I wrote a Python COM script that automatically converted every
+.slddrw file to print-ready A3 and A4 PDFs, ready for the department's physical
+catalogue.
+
+## Takeaway
+
+A locked-down driver and a tedious drawing pipeline look like unrelated problems, but
+they share a structure: somewhere underneath there is a bus you can sniff or an API you
+can script. The devil is in the details, and the details are usually documented, one
+hexadecimal byte at a time.

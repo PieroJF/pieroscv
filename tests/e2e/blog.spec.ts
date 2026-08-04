@@ -19,3 +19,13 @@ test('blog index lists the Fred-Factory post and navigates to it with a hero ima
   await expect(page.getByRole('heading', { level: 1 })).toContainText('fixture-driven assembly cell');
   await expect(page.locator('article > figure').first().locator('img')).toBeVisible();
 });
+
+test('blog index lists the Argos post and navigates to it with a hero image', async ({ page }) => {
+  await page.goto('/blog');
+  const postLink = page.getByRole('link', { name: /Reverse-engineering a US\$25,000/i });
+  await expect(postLink).toBeVisible();
+  await postLink.click();
+  await expect(page).toHaveURL(/\/blog\/argos-can-reverse-engineering/);
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Reverse-engineering');
+  await expect(page.locator('article > figure').first().locator('img')).toBeVisible();
+});
