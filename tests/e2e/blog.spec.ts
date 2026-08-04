@@ -29,3 +29,12 @@ test('blog index lists the Argos post and navigates to it with a hero image', as
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Reverse-engineering');
   await expect(page.locator('article > figure').first().locator('img')).toBeVisible();
 });
+
+test('blog index lists the SolidWorks post and navigates to it', async ({ page }) => {
+  await page.goto('/blog');
+  const postLink = page.getByRole('link', { name: /Automating SolidWorks drawing packages/i });
+  await expect(postLink).toBeVisible();
+  await postLink.click();
+  await expect(page).toHaveURL(/\/blog\/solidworks-drawing-automation/);
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Automating SolidWorks');
+});

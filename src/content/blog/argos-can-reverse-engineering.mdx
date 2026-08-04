@@ -1,8 +1,8 @@
 ---
 title: "Reverse-engineering a US$25,000 motor driver's CAN protocol with two Arduinos"
-description: "How I got a downhole-rated motor driver running from a standard Arduino by sniffing its CAN bus, plus the VBA/Python COM scripts that cut SolidWorks drawing packages from hours to minutes."
+description: "How I got a downhole-rated motor driver running from a standard Arduino by sniffing its CAN bus and reverse-engineering the vendor's undocumented control sequence."
 pubDate: 2026-08-03
-tags: ["embedded", "can-bus", "reverse-engineering", "solidworks", "automation"]
+tags: ["embedded", "can-bus", "reverse-engineering"]
 heroImage: ../../assets/projects/argos/rig-photo.jpg
 heroImageAlt: "Bench test rig: an Arduino Mega with breadboard and DB9 serial links wired to a bench power supply, a solenoid valve, a solid-state relay and the CAN-connected motor driver."
 ---
@@ -10,9 +10,9 @@ import Figure from '../../components/Figure.astro';
 import workflowImg from '../../assets/projects/argos/motor-driver-workflow.png';
 
 During my time as an Automation Engineer at Argos, an oil and gas automation company in
-Mexico, I ran into two very different walls: a motor driver that would only talk to its
-vendor's software, and a drawing workflow that ate entire afternoons. Both fell to the
-same approach: find the seam, script it.
+Mexico, I ran into a wall: a motor driver that would only talk to its vendor's software.
+The way through it was the approach that ended up defining that job for me: find the
+seam, script it.
 
 ## The US$25,000 driver nobody could talk to
 
@@ -54,26 +54,12 @@ What I like most about this one is that it needed no exotic tooling. A spare Ard
 C script, a log file and patience were enough to open up hardware that was effectively
 locked to one vendor's stack.
 
-## Bonus round: killing the drawing grind
-
-Same job, different bottleneck. I noticed the engineering department was losing hours on
-a purely mechanical task: many SolidWorks parts had to be turned into 2D drawings, and
-every .slddrw file then had to be converted to PDF one by one. Slow, tedious and
-inefficient.
-
-Using Claude and the SolidWorks documentation, I discovered the whole workflow could be
-automated with VBA and Python scripts through the COM interface: generating the 2D
-drawings, dimensioning the part, inserting its data, generating tables such as the bill
-of materials, and the rest of the routine steps a drawing requires. Drawing packages for
-entire assemblies that used to take hours were now done in minutes.
-
-To close the loop, I wrote a Python COM script that automatically converted every
-.slddrw file to print-ready A3 and A4 PDFs, ready for the department's physical
-catalogue.
-
 ## Takeaway
 
-A locked-down driver and a tedious drawing pipeline look like unrelated problems, but
-they share a structure: somewhere underneath there is a bus you can sniff or an API you
-can script. The devil is in the details, and the details are usually documented, one
-hexadecimal byte at a time.
+A locked-down driver looks like a dead end, but somewhere underneath there is always a
+bus you can sniff. The devil is in the details, and the details are usually documented,
+one hexadecimal byte at a time.
+
+Same job threw a very different bottleneck at me too — a SolidWorks drawing workflow
+that ate entire afternoons. That one got its own post:
+[Automating SolidWorks drawing packages with VBA and Python over COM](/blog/solidworks-drawing-automation).

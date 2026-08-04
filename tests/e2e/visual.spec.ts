@@ -13,6 +13,7 @@ const pages = [
   { name: 'qarm-post', path: '/blog/qarm-fruit-sorting' },
   { name: 'fred-post', path: '/blog/fred-factory-station-design' },
   { name: 'argos-post', path: '/blog/argos-can-reverse-engineering' },
+  { name: 'solidworks-post', path: '/blog/solidworks-drawing-automation' },
   { name: 'cv', path: '/cv' },
 ];
 

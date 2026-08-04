@@ -1,0 +1,34 @@
+---
+title: "Automating SolidWorks drawing packages with VBA and Python over COM"
+description: "How the routine steps of a SolidWorks drawing — 2D views, dimensions, part data, BOM tables — became VBA and Python COM scripts that cut whole-assembly drawing packages from hours to minutes, capped with a batch converter to print-ready A3/A4 PDFs."
+pubDate: 2026-08-04
+tags: ["solidworks", "automation", "python", "vba"]
+---
+
+During my time as an Automation Engineer at Argos, an oil and gas automation company in
+Mexico, I noticed the engineering department was losing hours on a purely mechanical
+task: many SolidWorks parts had to be turned into 2D drawings, and every .slddrw file
+then had to be converted to PDF one by one. Slow, tedious and inefficient.
+
+## Finding the seam: the COM interface
+
+Using Claude and the SolidWorks documentation, I discovered the whole workflow could be
+automated with VBA and Python scripts through the COM interface: generating the 2D
+drawings, dimensioning the part, inserting its data, generating tables such as the bill
+of materials, and the rest of the routine steps a drawing requires. Drawing packages for
+entire assemblies that used to take hours were now done in minutes.
+
+## From .slddrw to a print-ready catalogue
+
+To close the loop, I wrote a Python COM script that automatically converted every
+.slddrw file to print-ready A3 and A4 PDFs, ready for the department's physical
+catalogue. With this the whole engineering department's workflow got noticeably more
+fluid and efficient.
+
+## Takeaway
+
+None of this needed a plugin, a license upgrade or vendor support. SolidWorks already
+exposes everything a drawing requires through COM — the hours were going into clicking
+through steps that were documented all along. It is the same lesson as the
+[US$25,000 motor driver from the same job](/blog/argos-can-reverse-engineering):
+somewhere underneath there is an API you can script.
