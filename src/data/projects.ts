@@ -3,6 +3,7 @@ import qarmTrajectory from '../assets/projects/qarm/trajectory-3d.png';
 import fredStationPhoto from '../assets/projects/fred-factory/station-photo.png';
 import robodkCadIso from '../assets/projects/robodk/cad-iso.png';
 import latticeObstacleMap from '../assets/projects/lattice/obstacle-map.png';
+import mooseArchitecture from '../assets/projects/moose/architecture.png';
 
 export type Project = {
   slug: string;
@@ -65,12 +66,16 @@ export const projects: Project[] = [
     summary:
       'Mapping and perception for a Clearpath Moose 8-wheel grass-cutting robot on hilly terrain with slope hazard avoidance (>20°).',
     highlights: [
-      'Wrote the Extended Kalman Filter fusing wheel odometry and compass heading — drift-free localization on slopes',
-      'OctoMap probabilistic occupancy (depth 12) with dynamic recentring, plus a 200×200 elevation grid with slope/roughness traversability costs',
-      "LiDAR pipeline: range filtering (0.3–50 m), voxel downsampling (0.1 m), ICP scan matching; integrated with the team's A* planner and GPS/IMU fusion",
+      'Wrote the Extended Kalman Filter — 6-state [x, y, z, roll, pitch, yaw] fusing GPS, IMU and compass — for drift-free localization on slopes (RMSE 4 mm)',
+      'OctoMap probabilistic occupancy (depth 12) with dynamic recentring, plus a 200×200 elevation grid (86.6% coverage) with slope/roughness traversability costs',
+      "LiDAR pipeline: range filtering (0.3–50 m), voxel downsampling (0.1 m), ICP scan matching over 4,735+ frames (800K+ points); integrated with the team's A* planner",
     ],
     repo: 'https://github.com/PieroJF/Autonomous-Navigation-and-3D-Mapping-for-Grass-Cutting-Robots-on-Inclined-Terrains',
     featured: true,
+    image: {
+      src: mooseArchitecture,
+      alt: 'System architecture map of the Moose navigation stack: four color-coded workstreams (robot setup, EKF fusion, 3D mapping, slope-aware navigation) with labeled data handoffs between subtasks.',
+    },
   },
   {
     slug: 'fred-factory',

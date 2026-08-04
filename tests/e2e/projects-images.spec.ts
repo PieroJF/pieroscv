@@ -11,5 +11,7 @@ test('projects with images render a framed thumbnail; projects without stay text
   const latticeCard = page.getByRole('article').filter({ hasText: 'State-Lattice Motion Planning' });
   await expect(latticeCard.locator('figure img')).toBeVisible();
   const mooseCard = page.getByRole('article').filter({ hasText: 'Autonomous Navigation for an All-Terrain Robot' });
-  await expect(mooseCard.locator('figure')).toHaveCount(0);
+  await expect(mooseCard.locator('figure img')).toBeVisible();
+  const boraCard = page.getByRole('article').filter({ hasText: 'Hotel PMS/CRM in Production' });
+  await expect(boraCard.locator('figure')).toHaveCount(0);
 });
