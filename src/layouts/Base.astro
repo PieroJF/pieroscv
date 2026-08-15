@@ -2,9 +2,10 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { CF_BEACON_TOKEN } from '../data/analytics';
 
-interface Props { title: string; description: string; ogImage?: string }
-const { title, description, ogImage = '/og.png' } = Astro.props;
+interface Props { title: string; description: string; ogImage?: string; ogType?: string }
+const { title, description, ogImage = '/og.png', ogType = 'website' } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 <!doctype html>
@@ -17,13 +18,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta property="og:type" content="website" />
+    <link rel="alternate" type="application/rss+xml" title="Piero Flores López — Blog" href="/rss.xml" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={new URL(ogImage, Astro.site)} />
     <meta name="twitter:card" content="summary_large_image" />
     <slot name="head" />
+    {CF_BEACON_TOKEN && (
+      <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: CF_BEACON_TOKEN })}></script>
+    )}
   </head>
   <body class="min-h-dvh antialiased">
     <Header />
