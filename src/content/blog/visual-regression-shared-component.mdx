@@ -1,0 +1,79 @@
+---
+title: "A shared component broke a page nobody touched"
+description: "The CI forensics behind commit ad76792 on this very site: a thumbnail added to ProjectCard silently restyled the home page, and full-page visual regression across 4 viewports was the only suite that noticed."
+pubDate: 2026-08-16
+tags: ["testing", "playwright", "ci", "astro"]
+---
+
+This site is about as boring as web technology gets: static Astro output, zero
+JavaScript files shipped to the client. It still runs 53 automated tests on every push —
+51 Playwright and 2 Vitest — including axe accessibility audits against WCAG 2.2 AA on 7
+routes and 32 full-page visual regression baselines. A reasonable person might ask why a
+personal portfolio needs any of that. Commit `ad76792` is why.
+
+## The change that looked local
+
+At the end of July I was integrating real project photos into the site. One task in the
+plan: add thumbnails to the cards on [/projects](/projects). The edit went into
+`ProjectCard.astro` — when a project has an `image` field, render a thumbnail above the
+text. I regenerated the visual baselines for the projects page, watched everything go
+green locally, and moved on.
+
+Here is what I did not think about. The home page has a "Featured work" section, and it
+renders the same `ProjectCard` component. The featured projects that had just gained
+images now rendered thumbnails on the home page too. The home page's layout changed —
+and nobody had touched the home page.
+
+## The failing run
+
+The visual suite screenshots 8 pages at 4 viewports — 320, 768, 1024 and 1440 px — and
+compares each full-page shot against a committed baseline with a `maxDiffPixelRatio` of
+0.02. On the next CI run, GitHub Actions run 30642437223 reported:
+
+> 4 failed: home-mobile/tablet/laptop/desktop, 37 passed
+
+That failure shape *is* the diagnosis. All four home viewports failing while every other
+page stays green is exactly what a legitimate layout change to one page looks like. Before
+touching anything I confirmed the failures reproduced identically on `ubuntu-latest` in
+CI, on the same commit, not just on my machine — as the commit message puts it, "a real
+regression, not environment noise". The baselines for the home page still showed the
+pre-thumbnail render; the page itself had legitimately moved on.
+
+## Targeted regeneration, not a blanket reset
+
+The tempting fix when visual tests fail is to regenerate everything and let CI go green.
+That is also the way to make a visual suite worthless: a blanket reset blesses whatever
+the current render happens to be, bugs included. If I had done that here without looking,
+I would have learned nothing — and the next unintended change would sail through the same
+way.
+
+Instead I treated it like any other regression. Confirm the cause (the shared component),
+confirm the new render is actually the intended one (it was — the thumbnails belong on
+the featured cards), then regenerate only what is stale: a single `--update-snapshots`
+run scoped with `--grep` to the home visual tests. Four PNG baselines changed, nothing
+else in the diff. The commit message records the whole chain — root cause, the CI run
+that confirmed it, and the exact regeneration command — so the fix is auditable later,
+by me or anyone reading the public repo.
+
+## What every other test said
+
+Nothing. That is the interesting part. Every functional assertion on the home page kept
+passing: the heading is visible, the links resolve, the cards render their titles. The
+accessibility audit was equally happy — a thumbnail with proper alt text is not a WCAG
+violation. By every behavioural measure the home page was fine. The only kind of test
+that can notice "this page looks different now" is one that actually looks at the page.
+
+Shared components are the multiplier here. You edit one file in the mental context of one
+page, and every page importing that component changes with it. That is precisely what
+components are for — and precisely why the blast radius of a "small" edit is larger than
+the diff suggests. Full-page visual regression turns those invisible side effects into
+pixel diffs you are forced to look at.
+
+## Takeaway
+
+A component-based architecture means no change is as local as it looks. Functional tests
+verify what a page *does*; only visual tests verify what a page *is*. For the cost of 32
+PNG files in a repo and a few seconds of CI, I get a guarantee no assertion-based suite
+can offer: if any of the 8 pages shifts by more than 2% of its pixels, at any of 4
+viewports, a robot tells me before a human ever sees it. On a site that exists to be
+looked at, that is the one test category I would keep if I could only keep one.

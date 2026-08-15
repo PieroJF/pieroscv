@@ -1,0 +1,83 @@
+---
+title: "A 44.8 mm miss: one day of camera–arm calibration debugging"
+description: "How our QArm's first physical pick failed by 44.8 mm, and the fifteen-commit day that fixed corner-order ambiguity, mirror-flipped extrinsics and a too-loose settle gate."
+pubDate: 2026-08-17
+tags: ["robotics", "computer-vision", "calibration"]
+---
+
+For our Applied Robotics module at the University of Birmingham, a team of four of us
+built an autonomous fruit-sorting system: a Quanser QArm 4-DOF manipulator with an Intel
+RealSense D415 RGB-D camera, sorting 14 fruits into 3 baskets. I've already written about
+[the inverse kinematics](/blog/qarm-fruit-sorting). This post covers the part of the
+project I owned: camera–arm calibration — specifically the day it failed in the lab, and
+the roughly fifteen commits it took me, one day later, to rebuild trust in it.
+
+## The pick that missed
+
+On 21 April 2026 we ran the full autonomous pipeline on hardware for the first time. The
+robot scanned the table, classified a fruit, planned the approach, descended, closed the
+gripper — on air. The post-mortem number was brutally clear: a **44.8 mm calibration
+residual** between where the camera said the fruit was and where the arm actually went.
+Our gripper forgives roughly 10 mm. Everything downstream — inverse kinematics accurate
+to 0.0002 mm, spline trajectories, the state machine — had executed flawlessly on
+coordinates that were simply wrong.
+
+That's what makes calibration bugs nasty: nothing crashes. Every module does correct
+arithmetic in a frame that doesn't match reality.
+
+## Deleting our own work
+
+Our original calibration was a closed-loop rig with a secondary UGreen webcam watching
+the arm — work I had put real hours into, including diagnosing a hang in `cap.set()` and
+an image-diff tracker whose TCP detection broke whenever someone walked through the
+background of the lab. On 22 April the team made the right call: throw it away. Two days
+of work, deleted on purpose, replaced by a single-camera pipeline built around a printed
+chessboard lying on the work surface. The redesign and the detector rewrite that day were
+largely my teammates' push, and the payoff was immediate: per-session calibration setup
+dropped from **~20 minutes to ~30 seconds**.
+
+Sunk cost argues loudly in the middle of a two-week sprint. It was still the correct
+decision — and it set up the day this post is really about.
+
+## Fifteen commits on 24 April
+
+A chessboard makes calibration fast; it does not make it correct. My job on 24 April was
+making the board → camera → robot chain trustworthy, and the day resolved into four
+fixes, visible commit by commit.
+
+**1. Corner-order ambiguity.** OpenCV's `findChessboardCorners` returns the grid of
+interior corners, but the ordering it picks depends on how the board sits in the image.
+Same board, slightly different viewpoint, and the corners get enumerated from a different
+edge — which silently builds a coordinate frame rotated relative to the previous
+session's. My fix: sweep all **four candidate orientations** of the corner grid, score
+each against the expected geometry, and construct the board frame from **three corners**
+— an origin plus two edge directions — orthogonalized with **Gram–Schmidt**, so pixel
+noise can't smuggle a shear into what must be a pure rotation.
+
+**2. The right solver for a plane.** A chessboard is coplanar, the degenerate case that
+general-purpose PnP solvers handle worst. I switched the extrinsics solve to
+**`SOLVEPNP_IPPE`**, OpenCV's solver built specifically for planar targets.
+
+**3. Rejecting the mirror world.** Planar PnP has a known two-fold ambiguity: a single
+image admits two consistent poses, one of them mirror-inverted through the board plane.
+Occasionally the solver preferred the impossible one — a camera below the table. I added
+a guard that rejects any extrinsic placing the camera on the wrong side of the plane. Not
+unlikely: unrepresentable.
+
+**4. Capturing while still moving.** Some calibration frames were being grabbed while the
+arm was still settling into its survey pose. I tightened the capture settle tolerance
+from **0.05 to 0.015 rad**, so a frame is only taken once the joints have genuinely
+stopped.
+
+## What it bought us
+
+After that day, calibration stopped being a topic. Thirty seconds at the start of a lab
+session, a residual check, and on to the actual sorting.
+
+The lesson I keep from it: calibration errors never announce themselves, so the pipeline
+has to reject wrong answers structurally — orientation sweeps instead of trusting an
+ordering, a guard instead of hoping the solver picks the physical solution, a settle gate
+instead of assuming stillness. Trust in a robot's perception isn't something you verify
+once; it's something you enforce every session, in thirty seconds.
+
+Code: [github.com/PieroJF/Robot-qarm-fruit-sorting](https://github.com/PieroJF/Robot-qarm-fruit-sorting).
