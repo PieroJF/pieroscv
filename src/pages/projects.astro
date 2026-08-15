@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import ProjectCard from '../components/ProjectCard.astro';
-import { projects } from '../data/projects';
+import { projects, oss } from '../data/projects';
 
 const featured = projects.filter((p) => p.featured);
 const other = projects.filter((p) => !p.featured);
@@ -26,5 +26,10 @@ const other = projects.filter((p) => !p.featured);
   <section class="mt-16" aria-labelledby="more-heading">
     <SectionHeading index="02" title="More work" />
     <div class="mt-2 space-y-10 pt-4">{other.map((p) => <ProjectCard project={p} />)}</div>
+  </section>
+
+  <section class="mt-16" aria-labelledby="oss-heading">
+    <SectionHeading index="03" title="Open source & tooling" />
+    <div class="mt-2 space-y-10 pt-4">{oss.map((p) => <ProjectCard project={p} />)}</div>
   </section>
 </Base>
