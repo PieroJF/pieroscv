@@ -26,3 +26,8 @@ pnpm-debug.log*
 # test artifacts
 test-results/
 playwright-report/
+
+# local source material (drafts, raw video, exports) — not site assets
+/Argos automation story/
+/autonomous navigation/
+/qarm/
